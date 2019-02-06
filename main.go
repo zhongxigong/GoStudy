@@ -17,6 +17,10 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintf(w, "this is home")
 }
 
+func HelloList(){
+
+}
+
 
 func HelloGo() string{
 	println("hello world")

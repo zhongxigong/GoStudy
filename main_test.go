@@ -1,12 +1,27 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"math"
 	"net/http"
 	"strconv"
 	"testing"
 )
+
+
+func TestHelloList(t *testing.T) {
+	mylist := list.New()
+
+	mylist.PushBack(1)
+	mylist.PushBack(2)
+
+	for e := mylist.Front(); e != nil; e = e.Next() {
+		fmt.Println(e.Value)
+	}
+
+
+}
 
 func TestHelloPointer(t *testing.T) {
 	a := 5
