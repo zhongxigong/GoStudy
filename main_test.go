@@ -4,11 +4,12 @@ import (
 	"container/list"
 	"fmt"
 	"math"
+	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"testing"
 )
-
 
 func TestHelloList(t *testing.T) {
 	mylist := list.New()
@@ -19,7 +20,6 @@ func TestHelloList(t *testing.T) {
 	for e := mylist.Front(); e != nil; e = e.Next() {
 		fmt.Println(e.Value)
 	}
-
 
 }
 
@@ -174,4 +174,73 @@ func TestHelloGo(t *testing.T) {
 
 	a <- true
 	<-Exit
+}
+
+func TestHelloPing(t *testing.T) {
+	connect, error := net.Dial("tcp", "localhost:9999")
+	if error != nil {
+		fmt.Println("connect error")
+		return
+	}
+	for {
+		n, error := connect.Write([]byte("echo hello world"))
+		if error != nil || n == 0 {
+			fmt.Println("write message error")
+		}
+		buf := make([]byte, 1024*4)
+		n, error = connect.Read(buf)
+		if error != nil || n == 0 {
+			fmt.Println("read message error")
+		}
+		fmt.Println(strings.TrimSpace(string(buf[:n])))
+	}
+}
+
+func handleConnect(connect net.Conn) {
+
+	buf := make([]byte, 1024*4)
+
+	for {
+		count, error := connect.Read(buf)
+		if error != nil || count == 0 {
+			fmt.Println("handleConnect end")
+			connect.Close()
+			break
+		}
+		str := string(buf[0:count])
+		str = strings.TrimSpace(str)
+		fmt.Println("read message is " + str)
+
+		inputs := strings.Split(str, " ")
+
+		switch inputs[0] {
+		case "ping":
+			connect.Write([]byte("pong\n"))
+		case "echo":
+			output := strings.Join(inputs[1:], " ")
+			connect.Write([]byte(output))
+		case "quit":
+			connect.Close()
+			break
+		default:
+			fmt.Printf("Unsupported command: %s\n", inputs[0])
+
+		}
+	}
+}
+
+func TestHelloPong(t *testing.T) {
+	listener, error := net.Listen("tcp", ":9999")
+	if error != nil {
+		fmt.Println("tcp error")
+		return
+	}
+	for {
+		conn, error := listener.Accept()
+		if error != nil {
+			fmt.Println("accept error")
+			return
+		}
+		go handleConnect(conn)
+	}
 }

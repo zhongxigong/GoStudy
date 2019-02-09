@@ -17,6 +17,14 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintf(w, "this is home")
 }
 
+func HelloPing()  {
+	
+}
+
+func HelloPong()  {
+	
+}
+
 func HelloList(){
 
 }
