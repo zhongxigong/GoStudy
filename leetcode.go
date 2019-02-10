@@ -11,3 +11,7 @@ func AddTwoNumbers() {
 func HelloScan() {
 
 }
+
+func MasSubStr() {
+
+}
