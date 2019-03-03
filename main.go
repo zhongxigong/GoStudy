@@ -10,6 +10,7 @@ func main() {
 	fmt.Println("hello world")
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
+	http.ListenAndServe("127.0.0.1:3000",r)
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
